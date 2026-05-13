@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Prontuário · Teruel &amp; Izaulina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F7;--bg2:#E5E9F2;--surface:#FFFFFF;--surface2:#F5F7FB;
+  --border:#DDE3EE;--border2:#C8D0E0;
+  --ink:#0D1828;--ink2:#3A4A60;--ink3:#6E7F96;--ink4:#A0AFBF;
+  --brand:#1540C4;--brand2:#0F2FA0;--brand-lt:#EBF0FD;--brand-mid:#3B65D8;
+  --teal:#0A7B6B;--teal-lt:#E5F4F2;
+  --red:#C13030;--red-lt:#FDECEC;
+  --amber:#9A6500;--amber-lt:#FEF4E0;
+  --green:#1A7A3E;--green-lt:#E8F7EE;
+  --h:60px;--tab-h:48px;--r:12px;--r-lg:18px;--r-xl:24px;
+  --shadow:0 1px 4px rgba(13,24,40,.06),0 2px 12px rgba(13,24,40,.04);
+  --shadow-lg:0 4px 20px rgba(13,24,40,.10),0 1px 4px rgba(13,24,40,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:15px;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:'Sora',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;overflow-x:hidden;line-height:1.55}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit}
+a{text-decoration:none;color:inherit}
+
+.shell{max-width:800px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
+@media(min-width:820px){body{background:#D8DCEB}.shell{box-shadow:0 0 0 1px var(--border2),0 24px 80px rgba(13,24,40,.14)}}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:200;height:var(--h);background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topbar-logo{width:36px;height:36px;border-radius:10px;background:var(--brand);display:grid;place-items:center;font-size:1.1rem;flex-shrink:0;box-shadow:0 2px 8px rgba(21,64,196,.35)}
+.topbar-info{flex:1;min-width:0}
+.topbar-title{font-size:.92rem;font-weight:700;color:var(--ink);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-sub{font-size:.68rem;color:var(--ink3);font-weight:500;margin-top:1px}
+.topbar-tag{font-size:.68rem;font-weight:700;letter-spacing:.4px;background:var(--brand-lt);color:var(--brand);border:1px solid rgba(21,64,196,.15);border-radius:20px;padding:4px 10px;white-space:nowrap;flex-shrink:0}
+
+/* TABBAR */
+.tabbar{position:sticky;top:var(--h);z-index:190;height:var(--tab-h);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 12px;gap:0}
+.tabbar::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:0 14px;height:100%;font-size:.78rem;font-weight:600;color:var(--ink3);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;transition:color .14s,border-color .14s;flex-shrink:0}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab-badge{background:var(--brand);color:#fff;border-radius:20px;font-size:.6rem;font-weight:700;padding:2px 6px;min-width:18px;text-align:center}
+
+/* CONTENT */
+.content{padding:18px 16px 48px;flex:1}
+.section{display:none;animation:fadeUp .2s ease}
+.section.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 12px 14px;text-align:center;box-shadow:var(--shadow)}
+.kpi-n{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--brand);line-height:1}
+.kpi-l{font-size:.65rem;font-weight:600;color:var(--ink3);margin-top:5px;letter-spacing:.3px;text-transform:uppercase}
+
+/* PATIENT */
+.patient{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden}
+.patient-head{padding:16px 18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px}
+.patient-av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:1.2rem;flex-shrink:0}
+.av-f{background:linear-gradient(135deg,#FFD4CC,#FFA89C)}
+.av-m{background:linear-gradient(135deg,#C8D8FF,#9DB8F8)}
+.patient-name{font-size:1rem;font-weight:700;color:var(--ink)}
+.patient-desc{font-size:.72rem;color:var(--ink3);font-weight:500;margin-top:1px}
+.patient-body{padding:14px 18px 16px}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.pill{display:inline-flex;align-items:center;border-radius:7px;padding:4px 9px;font-size:.7rem;font-weight:600}
+.pill-b{background:var(--brand-lt);color:var(--brand);border:1px solid rgba(21,64,196,.13)}
+.pill-r{background:var(--red-lt);color:var(--red);border:1px solid rgba(193,48,48,.13)}
+.pill-a{background:var(--amber-lt);color:var(--amber);border:1px solid rgba(154,101,0,.13)}
+.patient-note{font-size:.78rem;color:var(--ink2);line-height:1.65}
+
+/* INFO BOX */
+.info{border-radius:var(--r);padding:13px 15px;margin-bottom:12px;border-left:3px solid}
+.info-blue{background:var(--brand-lt);border-color:var(--brand)}
+.info-blue .info-label{color:var(--brand)}
+.info-amber{background:var(--amber-lt);border-color:var(--amber)}
+.info-amber .info-label{color:var(--amber)}
+.info-green{background:var(--green-lt);border-color:var(--green)}
+.info-green .info-label{color:var(--green)}
+.info-label{font-size:.66rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:5px}
+.info-body{font-size:.8rem;color:var(--ink2);line-height:1.65}
+.info-body b{color:var(--ink);font-weight:600}
+
+/* DIVIDER */
+.sdiv{font-size:.65rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--ink3);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* FILTERS */
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.f-full{grid-column:1/-1}
+.f-wrap{position:relative}
+.f-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none;z-index:1}
+.f-input{width:100%;padding:10px 11px 10px 34px;border:1.5px solid var(--border);border-radius:var(--r);font-size:.82rem;color:var(--ink);background:var(--surface);font-family:inherit;outline:none;transition:border-color .14s,box-shadow .14s;-webkit-appearance:none;appearance:none}
+.f-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(21,64,196,.09)}
+select.f-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236E7F96' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer}
+.result-bar{font-size:.75rem;font-weight:600;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.result-bar span{color:var(--brand);font-weight:700}
+
+/* EXAM CARD */
+.exam-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:7px}
+.exam-row1{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.exam-title{font-size:.9rem;font-weight:700;color:var(--ink);line-height:1.3;flex:1}
+.exam-badge{font-size:.65rem;font-weight:700;flex-shrink:0;margin-top:1px;border-radius:6px;padding:3px 8px}
+.badge-img{background:var(--teal-lt);color:var(--teal)}
+.badge-lab{background:var(--brand-lt);color:var(--brand)}
+.exam-meta{font-size:.72rem;color:var(--ink3);line-height:1.6}
+.exam-meta b{color:var(--ink2);font-weight:600}
+.exam-file{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--ink4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.exam-actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn-pdf{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;font-size:.73rem;font-weight:700;font-family:inherit;transition:opacity .12s,transform .1s;cursor:pointer}
+.btn-pdf:active{opacity:.8;transform:scale(.97)}
+.btn-open{background:var(--brand);color:#fff}
+.btn-dl{background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:18px;flex-wrap:wrap}
+.pg-btn{min-width:36px;height:36px;padding:0 10px;border-radius:9px;font-size:.78rem;font-weight:700;border:1.5px solid var(--border);background:var(--surface);color:var(--ink2);cursor:pointer;transition:background .12s,border-color .12s,color .12s;display:flex;align-items:center;justify-content:center}
+.pg-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.pg-btn:hover:not(.active):not(:disabled){background:var(--brand-lt);border-color:var(--brand);color:var(--brand)}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-info{font-size:.72rem;color:var(--ink3);font-weight:500;text-align:center;margin-top:6px}
+
+/* EMPTY */
+.empty{text-align:center;padding:56px 20px;color:var(--ink3)}
+.empty-ic{font-size:2.4rem;margin-bottom:10px}
+.empty-txt{font-size:.85rem;line-height:1.65}
+
+/* CHART */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:18px 18px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+.chart-title{font-size:.95rem;font-weight:700;color:var(--ink)}
+.chart-sub{font-size:.72rem;color:var(--ink3);margin-top:2px;margin-bottom:14px}
+.canvas-wrap{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:8px;overflow:hidden}
+canvas{display:block;width:100%!important}
+.lab-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:.78rem}
+.lab-table th{text-align:left;font-size:.63rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--ink3);padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.lab-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle}
+.lab-table tr:last-child td{border-bottom:none}
+.lab-table td:first-child{font-weight:600;color:var(--ink)}
+.val-cell{font-family:'JetBrains Mono',monospace;font-weight:500}
+.val-high{color:var(--red);font-weight:700}
+
+/* CONSULTA */
+.speech{background:var(--brand);color:#fff;border-radius:var(--r-xl);padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow-lg)}
+.speech-label{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.65;margin-bottom:8px}
+.speech-text{font-size:.88rem;line-height:1.65;font-style:italic}
+.cg{margin-bottom:20px}
+.cg-title{font-size:.72rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.cg-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.ci-list{display:flex;flex-direction:column;gap:7px}
+.ci{display:flex;gap:11px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;box-shadow:var(--shadow)}
+.ci-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ci-txt{font-size:.8rem;color:var(--ink2);line-height:1.65}
+.ci-tip{font-size:.73rem;color:var(--ink3);margin-top:5px;font-style:italic}
+
+/* FOOTER */
+.disclaimer{font-size:.68rem;color:var(--ink4);text-align:center;padding:14px 20px 6px;border-top:1px solid var(--border);margin-top:10px;line-height:1.7}
+
+@media(max-width:480px){
+  .filters{grid-template-columns:1fr}.f-full{grid-column:1}
+  .topbar-tag{display:none}.content{padding:14px 12px 40px}.kpi-n{font-size:1.65rem}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="topbar">
+  <div class="topbar-logo">🩺</div>
+  <div class="topbar-info">
+    <div class="topbar-title">Prontuário · Teruel &amp; Izaulina</div>
+    <div class="topbar-sub">Organização de exames — uso pessoal e consulta médica</div>
+  </div>
+  <div class="topbar-tag" id="topbar-count">169 exames</div>
+</header>
+
+<nav class="tabbar" id="tabbar">
+  <button class="tab active" data-tab="resumo">📋 Resumo</button>
+  <button class="tab" data-tab="exames">🔬 Exames <span class="tab-badge" id="badge-exames">169</span></button>
+  <button class="tab" data-tab="graficos">📈 Gráficos</button>
+  <button class="tab" data-tab="consulta">💬 Consulta</button>
+</nav>
+
+<main class="content">
+
+<!-- RESUMO -->
+<section class="section on" id="resumo">
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-n" id="kn-total">—</div><div class="kpi-l">Exames</div></div>
+    <div class="kpi"><div class="kpi-n" id="kn-maria">—</div><div class="kpi-l">Maria</div></div>
+    <div class="kpi"><div class="kpi-n" id="kn-joao">—</div><div class="kpi-l">João</div></div>
+  </div>
+
+  <div class="patient">
+    <div class="patient-head">
+      <div class="patient-av av-f">👩</div>
+      <div><div class="patient-name">Maria Izaulina</div><div class="patient-desc">Múltiplas comorbidades crônicas · <span id="cnt-maria">—</span> exames</div></div>
+    </div>
+    <div class="patient-body">
+      <div class="pills">
+        <span class="pill pill-b">Diabetes</span><span class="pill pill-b">Hipertensão</span>
+        <span class="pill pill-r">Stent carótida</span><span class="pill pill-a">Memória em piora</span>
+        <span class="pill pill-b">Osteoporose</span><span class="pill pill-b">Fibromialgia</span>
+        <span class="pill pill-b">Hérnia cervical/lombar</span>
+      </div>
+      <p class="patient-note">Histórico vascular/metabólico com múltiplas comorbidades crônicas. Relato familiar de piora progressiva de memória recente — investigação diferencial em andamento.</p>
+    </div>
+  </div>
+
+  <div class="patient">
+    <div class="patient-head">
+      <div class="patient-av av-m">👨</div>
+      <div><div class="patient-name">João Teruel</div><div class="patient-desc">Histórico cerebrovascular · <span id="cnt-joao">—</span> exames</div></div>
+    </div>
+    <div class="patient-body">
+      <div class="pills">
+        <span class="pill pill-r">4 AVCs</span><span class="pill pill-r">Sequela esquerda</span>
+        <span class="pill pill-a">Cadeirante</span><span class="pill pill-r">Stent carótida</span>
+        <span class="pill pill-a">Câncer de bexiga</span>
+      </div>
+      <p class="patient-note">Eventos cerebrovasculares recorrentes com sequela motora importante. Neoplasia de bexiga em acompanhamento. Creatinina elevada (1,9 mg/dL em 03/03/2026).</p>
+    </div>
+  </div>
+
+  <div class="sdiv">Distribuição dos exames</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="kpi-n" id="kn-lab" style="color:var(--brand)">—</div><div class="kpi-l">Laboratoriais</div></div>
+    <div class="kpi"><div class="kpi-n" id="kn-img" style="color:var(--teal)">—</div><div class="kpi-l">Imagens</div></div>
+    <div class="kpi"><div class="kpi-n" id="kn-esps" style="color:var(--ink2)">—</div><div class="kpi-l">Especialidades</div></div>
+  </div>
+
+  <div class="info info-blue">
+    <div class="info-label">💬 Frase de abertura sugerida</div>
+    <div class="info-body">"Doutora, organizei os exames porque são muitos, apenas para <b>facilitar a visualização</b> durante a consulta. Os originais estão todos aqui."</div>
+  </div>
+  <div class="info info-amber">
+    <div class="info-label">⚠️ Aviso importante</div>
+    <div class="info-body">Este prontuário <b>não substitui avaliação médica</b>. Todos os dados são organizacionais. Confira sempre os PDFs originais antes de qualquer decisão clínica.</div>
+  </div>
+</section>
+
+<!-- EXAMES -->
+<section class="section" id="exames">
+  <div class="filters">
+    <div class="f-full f-wrap">
+      <span class="f-icon">🔍</span>
+      <input class="f-input" id="q" type="search" placeholder="Buscar por título, arquivo, especialidade…" autocomplete="off">
+    </div>
+    <div class="f-wrap">
+      <span class="f-icon">👤</span>
+      <select class="f-input" id="pac">
+        <option value="">Todos os pacientes</option>
+        <option value="Maria Izaulina">Maria Izaulina</option>
+        <option value="João Teruel">João Teruel</option>
+      </select>
+    </div>
+    <div class="f-wrap">
+      <span class="f-icon">🏥</span>
+      <select class="f-input" id="esp"><option value="">Todas especialidades</option></select>
+    </div>
+  </div>
+  <div class="result-bar"><span id="rcount"></span><span id="rpage" style="font-size:.7rem;color:var(--ink4)"></span></div>
+  <div id="lista"></div>
+  <div id="paginacao" class="pagination"></div>
+  <div id="pg-info" class="pg-info"></div>
+</section>
+
+<!-- GRÁFICOS -->
+<section class="section" id="graficos">
+  <div class="info info-amber" style="margin-bottom:16px">
+    <div class="info-label">⚠️ Atenção clínica</div>
+    <div class="info-body">Apenas valores extraídos com segurança documental. <b>Confira no PDF original antes de qualquer decisão.</b></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Valores laboratoriais</div>
+    <div class="chart-sub">Histórico extraído de laudos validados</div>
+    <div class="canvas-wrap"><canvas id="chart" height="220"></canvas></div>
+    <div id="labtab"></div>
+  </div>
+  <div class="info info-green">
+    <div class="info-label">📌 Valor em atenção</div>
+    <div class="info-body"><b>Creatinina — João Teruel:</b> 1,9 mg/dL (03/03/2026). Valor acima do limite de referência (&lt;1,2 mg/dL). Levar ao conhecimento do médico assistente.</div>
+  </div>
+</section>
+
+<!-- CONSULTA -->
+<section class="section" id="consulta">
+  <div class="speech">
+    <div class="speech-label">Abertura da consulta</div>
+    <div class="speech-text">"Doutora, organizei os exames porque são muitos, e anotei algumas mudanças recentes para não esquecer durante a consulta."</div>
+  </div>
+
+  <div class="cg">
+    <div class="cg-title"><span>👩</span> Maria Izaulina</div>
+    <div class="ci-list">
+      <div class="ci"><div class="ci-dot" style="background:var(--brand)"></div><div><div class="ci-txt">"A memória recente piorou bastante — ela esquece coisas que acabamos de falar."</div><div class="ci-tip">→ Pode ser relacionada a circulação, remédios, sono, dor ou humor?</div></div></div>
+      <div class="ci"><div class="ci-dot" style="background:var(--brand)"></div><div><div class="ci-txt">"Existe exame ou avaliação que ajude a diferenciar envelhecimento normal, depressão e causa vascular?"</div></div></div>
+      <div class="ci"><div class="ci-dot" style="background:var(--brand)"></div><div><div class="ci-txt">"Quais dos medicamentos atuais poderiam estar contribuindo para a piora da memória?"</div></div></div>
+    </div>
+  </div>
+
+  <div class="cg">
+    <div class="cg-title"><span>👨</span> João Teruel</div>
+    <div class="ci-list">
+      <div class="ci"><div class="ci-dot" style="background:var(--red)"></div><div><div class="ci-txt">"Depois dos AVCs, ele ficou com fraqueza do lado esquerdo e não voltou a andar."</div><div class="ci-tip">→ Ainda há potencial com fisioterapia ou o foco é manutenção?</div></div></div>
+      <div class="ci"><div class="ci-dot" style="background:var(--red)"></div><div><div class="ci-txt">"O que acompanhar para reduzir risco de novos AVCs? Metas de pressão, anticoagulação, frequência de exames?"</div></div></div>
+      <div class="ci"><div class="ci-dot" style="background:var(--amber)"></div><div><div class="ci-txt">"A creatinina está em 1,9 mg/dL — precisamos ajustar medicação ou investigar função renal?"</div></div></div>
+    </div>
+  </div>
+
+  <div class="info info-blue">
+    <div class="info-label">💡 Durante a consulta</div>
+    <div class="info-body">Abra a aba <b>Exames</b> para mostrar o PDF diretamente ao médico. Use os filtros por paciente para agilizar a busca.</div>
+  </div>
+</section>
+
+<div class="disclaimer">
+  Prontuário de uso pessoal e organizacional. Não substitui avaliação, diagnóstico ou prescrição médica.<br>
+  Confira sempre os documentos originais. © 2026
+</div>
+
+</main>
+</div>
+
+<script src="data/data.js"></script>
+<script>
+if(typeof EXAMES==='undefined')window.EXAMES=[];
+if(typeof LABS==='undefined')window.LABS=[];
+
+const PAGE_SIZE=20;
+let filtered=[];
+let currentPage=1;
+
+/* TABS */
+document.getElementById('tabbar').addEventListener('click',e=>{
+  const btn=e.target.closest('.tab');if(!btn)return;
+  const id=btn.dataset.tab;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b===btn));
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('on',s.id===id));
+  if(id==='graficos')drawChart();
+  if(id==='exames')renderExames();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* INIT */
+function init(){
+  const total=EXAMES.length;
+  const maria=EXAMES.filter(e=>e.paciente==='Maria Izaulina').length;
+  const joao=EXAMES.filter(e=>e.paciente==='João Teruel').length;
+  const lab=EXAMES.filter(e=>e.tipo==='Laboratorial').length;
+  const img=EXAMES.filter(e=>e.tipo==='Imagem').length;
+  const esps=[...new Set(EXAMES.map(e=>e.especialidade).filter(Boolean))];
+
+  document.getElementById('kn-total').textContent=total;
+  document.getElementById('kn-maria').textContent=maria;
+  document.getElementById('kn-joao').textContent=joao;
+  document.getElementById('kn-lab').textContent=lab;
+  document.getElementById('kn-img').textContent=img;
+  document.getElementById('kn-esps').textContent=esps.length;
+  document.getElementById('cnt-maria').textContent=maria;
+  document.getElementById('cnt-joao').textContent=joao;
+  document.getElementById('badge-exames').textContent=total;
+  document.getElementById('topbar-count').textContent=total+' exames';
+
+  const espSel=document.getElementById('esp');
+  esps.sort().forEach(x=>{const o=document.createElement('option');o.value=x;o.textContent=x;espSel.appendChild(o);});
+  ['q','pac','esp'].forEach(id=>{document.getElementById(id).addEventListener('input',()=>{currentPage=1;renderExames();});});
+  renderExames();
+}
+
+/* RENDER */
+function renderExames(){
+  const qv=document.getElementById('q').value.toLowerCase();
+  const pv=document.getElementById('pac').value;
+  const ev=document.getElementById('esp').value;
+
+  filtered=EXAMES.filter(e=>{
+    if(pv&&e.paciente!==pv)return false;
+    if(ev&&e.especialidade!==ev)return false;
+    if(qv){const hay=(e.titulo+' '+e.arquivo_original+' '+e.especialidade+' '+e.tipo+' '+e.paciente).toLowerCase();if(!hay.includes(qv))return false;}
+    return true;
+  });
+
+  const n=filtered.length;
+  const pages=Math.max(1,Math.ceil(n/PAGE_SIZE));
+  if(currentPage>pages)currentPage=pages;
+
+  const rcount=document.getElementById('rcount');
+  if(n===0)rcount.innerHTML='Nenhum resultado';
+  else rcount.innerHTML=`<span>${n}</span> exame${n!==1?'s':''} encontrado${n!==1?'s':''}`;
+  document.getElementById('rpage').textContent=n>PAGE_SIZE?'Pág. '+currentPage+' de '+pages:'';
+
+  const slice=filtered.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+
+  if(!slice.length){
+    document.getElementById('lista').innerHTML='<div class="empty"><div class="empty-ic">🔍</div><div class="empty-txt">Nenhum exame encontrado com os filtros atuais.<br>Tente outro termo ou limpe os filtros.</div></div>';
+    document.getElementById('paginacao').innerHTML='';
+    document.getElementById('pg-info').textContent='';
+    return;
+  }
+
+  document.getElementById('lista').innerHTML=slice.map(e=>{
+    const isImg=e.tipo==='Imagem';
+    const badgeCls=isImg?'badge-img':'badge-lab';
+    const badgeTxt=isImg?'🖼 Imagem':'🧪 Lab';
+    const raw=e.arquivo_original||'';
+    const laudo=raw.replace(/^laudo_/i,'').replace(/_(?:laboratorial|imagem).*/i,'').replace(/\.pdf$/i,'').slice(0,28);
+    const autoNote=!e.conclusao||e.conclusao.includes('Classificação inicial automática')||e.conclusao.includes('PDF original anexado');
+    return '<div class="exam-card">'
+      +'<div class="exam-row1"><div class="exam-title">'+esc(e.titulo)+' <span style="color:var(--ink3);font-weight:500;font-size:.76rem">· '+esc(laudo)+'</span></div>'
+      +'<span class="exam-badge '+badgeCls+'">'+badgeTxt+'</span></div>'
+      +'<div class="exam-meta"><b>'+esc(e.paciente)+'</b> · '+esc(e.especialidade||'—')+(e.data_br?' · '+esc(e.data_br):'')+'</div>'
+      +'<div class="exam-file">'+esc(raw)+'</div>'
+      +(!autoNote?'<div style="font-size:.76rem;color:var(--ink2);line-height:1.6;border-top:1px solid var(--border);padding-top:7px">'+esc(e.conclusao)+'</div>':'')
+      +'<div class="exam-actions"><a class="btn-pdf btn-open" href="'+esc(e.arquivo)+'" target="_blank" rel="noopener">📄 Abrir PDF</a>'
+      +'<a class="btn-pdf btn-dl" href="'+esc(e.arquivo)+'" download>⬇ Baixar</a></div>'
+      +'</div>';
+  }).join('');
+
+  renderPagination(pages,n);
+}
+
+function renderPagination(pages,total){
+  const pg=document.getElementById('paginacao');
+  const info=document.getElementById('pg-info');
+  if(pages<=1){pg.innerHTML='';info.textContent='';return;}
+
+  let h='<button class="pg-btn" onclick="goPage('+(currentPage-1)+')" '+(currentPage===1?'disabled':'')+'>‹</button>';
+  let lo=Math.max(1,currentPage-2),hi=Math.min(pages,currentPage+2);
+  if(lo>1){h+='<button class="pg-btn" onclick="goPage(1)">1</button>';if(lo>2)h+='<span style="color:var(--ink4);align-self:center">…</span>';}
+  for(let i=lo;i<=hi;i++)h+='<button class="pg-btn'+(i===currentPage?' active':'')+'" onclick="goPage('+i+')">'+i+'</button>';
+  if(hi<pages){if(hi<pages-1)h+='<span style="color:var(--ink4);align-self:center">…</span>';h+='<button class="pg-btn" onclick="goPage('+pages+')">'+pages+'</button>';}
+  h+='<button class="pg-btn" onclick="goPage('+(currentPage+1)+')" '+(currentPage===pages?'disabled':'')+'>›</button>';
+  pg.innerHTML=h;
+
+  const from=(currentPage-1)*PAGE_SIZE+1;
+  const to=Math.min(currentPage*PAGE_SIZE,total);
+  info.textContent='Mostrando '+from+'–'+to+' de '+total;
+}
+
+function goPage(p){
+  currentPage=p;renderExames();
+  const top=document.getElementById('exames').offsetTop-120;
+  window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+}
+
+/* CHART */
+let chartDone=false;
+function drawChart(){
+  if(chartDone)return;chartDone=true;
+  const canvas=document.getElementById('chart');
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.parentElement.clientWidth-16;
+  const h=220;
+  canvas.width=w*dpr;canvas.height=h*dpr;
+  canvas.style.width=w+'px';canvas.style.height=h+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+
+  if(!LABS||!LABS.length){
+    ctx.fillStyle='#6E7F96';ctx.font='500 13px Sora,sans-serif';ctx.textAlign='center';
+    ctx.fillText('Sem dados laboratoriais validados disponíveis.',w/2,h/2);
+    document.getElementById('labtab').innerHTML='<p style="color:var(--ink3);font-size:.78rem;text-align:center;padding:14px">Nenhum valor extraído.</p>';
+    return;
+  }
+
+  const series={};
+  LABS.forEach(r=>{
+    const k=r.exame+'|'+r.paciente;
+    if(!series[k])series[k]={label:r.exame,pac:r.paciente,unit:r.unidade,pts:[]};
+    series[k].pts.push({x:r.date,y:parseFloat(r.valor)});
+  });
+
+  const COLORS=['#1540C4','#0A7B6B','#C13030','#9A6500'];
+  const pad={l:54,r:24,t:22,b:42};
+  const PW=w-pad.l-pad.r,PH=h-pad.t-pad.b;
+  const allY=Object.values(series).flatMap(s=>s.pts.map(p=>p.y)).filter(n=>!isNaN(n));
+  const minY=allY.length?Math.min(...allY)*0.8:0;
+  const maxY=allY.length?Math.max(...allY)*1.18:1;
+  const allX=[...new Set(LABS.map(r=>r.date))].sort();
+
+  // Grid
+  ctx.strokeStyle='#DDE3EE';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+PH*(1-i/4);
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+PW,y);ctx.stroke();
+    const v=(minY+(maxY-minY)*(i/4)).toFixed(2);
+    ctx.fillStyle='#6E7F96';ctx.font='10px JetBrains Mono,monospace';ctx.textAlign='right';
+    ctx.fillText(v,pad.l-5,y+4);
+  }
+
+  // Reference line creatinine 1.2
+  if(LABS.some(r=>r.exame==='Creatinina')){
+    const ry=pad.t+PH*(1-(1.2-minY)/(maxY-minY));
+    ctx.strokeStyle='rgba(193,48,48,.25)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(pad.l,ry);ctx.lineTo(pad.l+PW,ry);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='#C13030';ctx.font='500 9px Sora,sans-serif';ctx.textAlign='left';
+    ctx.fillText('Ref. máx: 1.2',pad.l+4,ry-4);
+  }
+
+  // Series
+  Object.values(series).forEach((s,ci)=>{
+    const col=COLORS[ci%COLORS.length];
+    const pts=s.pts.filter(p=>!isNaN(p.y));if(!pts.length)return;
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();
+    pts.forEach((p,i)=>{
+      const xi=allX.indexOf(p.x);
+      const x=pad.l+(allX.length===1?PW/2:PW*xi/Math.max(allX.length-1,1));
+      const y=pad.t+PH*(1-(p.y-minY)/(maxY-minY));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    pts.forEach(p=>{
+      const xi=allX.indexOf(p.x);
+      const x=pad.l+(allX.length===1?PW/2:PW*xi/Math.max(allX.length-1,1));
+      const y=pad.t+PH*(1-(p.y-minY)/(maxY-minY));
+      ctx.beginPath();ctx.arc(x,y,5.5,0,Math.PI*2);
+      ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle=col;ctx.font='bold 10px Sora,sans-serif';ctx.textAlign='center';ctx.lineWidth=2.5;
+      ctx.fillText(p.y,x,y-11);
+    });
+  });
+
+  // X labels
+  ctx.fillStyle='#6E7F96';ctx.font='10px JetBrains Mono,monospace';ctx.textAlign='center';
+  allX.forEach((d,i)=>{
+    const x=pad.l+(allX.length===1?PW/2:PW*i/Math.max(allX.length-1,1));
+    ctx.fillText(d,x,h-6);
+  });
+
+  // Table
+  const rows=LABS.map(r=>{
+    const hi=r.exame==='Creatinina'&&parseFloat(r.valor)>1.2;
+    return '<tr><td>'+esc(r.exame)+'</td><td>'+esc(r.paciente)+'</td>'
+      +'<td class="val-cell'+(hi?' val-high':'')+'">'+esc(String(r.valor))+' <span style="font-weight:400;color:var(--ink3)">'+esc(r.unidade||'')+'</span></td>'
+      +'<td>'+esc(r.date||'—')+'</td><td style="font-size:.68rem;color:var(--ink4)">'+esc(r.fonte||'—')+'</td></tr>';
+  }).join('');
+  document.getElementById('labtab').innerHTML='<table class="lab-table"><thead><tr><th>Exame</th><th>Paciente</th><th>Valor</th><th>Data</th><th>Fonte</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function esc(s){
+  if(s==null)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>

@@ -22,11 +22,29 @@ Feito para uma família que cuida a distância e se divide entre várias pessoas
 | "Meu irmão não sabia da mudança" | **Mural** da família com avisos, escalas e recados fixados |
 | "Quem foi que mexeu na dose?" | **Auditoria**: quem fez o quê e quando, sem poder apagar |
 | "A senha do portal está no bloco de notas" | Credenciais **cifradas** dentro do cofre da família |
+| "O médico pergunta pelo exame e eu não acho no celular" | **Modo consulta**: exames agrupados **por especialidade** — todos os de imagem, laboratoriais e demais — prontos para mostrar ou imprimir |
 
 ## Telas
 
 `Painel` · `Agenda` · `Prontuário` · `Medicações` · `Sinais` · `Exames` ·
-`Documentos` · `Mural` · `Rede D'Or` · `Amil` · `Equipe` · `Auditoria` · `Ajustes`
+`Consulta` · `Documentos` · `Mural` · `Rede D'Or` · `Amil` · `Equipe` ·
+`Auditoria` · `Ajustes`
+
+### 🩺 Modo consulta — os exames que cabem a cada especialidade
+
+A tela feita para o app aberto na frente do médico:
+
+- A família escolhe a **especialidade** (ou deixa em "Todas as áreas") e o app
+  reúne os exames daquela área — **imagem, laboratoriais e demais**.
+- A especialidade é **deduzida pelo nome do exame** (`Ressonância de crânio` →
+  Neurologia, `Hemograma` → Hematologia). O campo *Especialidade a que se refere*,
+  no cadastro de exames, tem prioridade quando preenchido.
+- **Nada fica escondido:** abaixo há sempre o bloco *"Também no prontuário"* com
+  as outras áreas, e a aba **Tudo** mostra o acervo completo. Exame sem pista
+  reconhecível cai em **Clínica geral** — nunca desaparece.
+- No topo, o resumo de 30 segundos: condições, alergias, medicações em uso e os
+  valores fora da faixa.
+- **🖨 Imprimir / salvar PDF** gera a via em papel para anexar ao prontuário.
 
 ---
 
@@ -181,13 +199,14 @@ costuma falhar na hora da consulta.
 
 ```bash
 npm run verificar       # integridade de imports/exports
-npm test                # 227 asserções (Node + jsdom + WebCrypto real)
+npm test                # 245 asserções (Node + jsdom + WebCrypto real)
 ```
 
 A suíte cobre: criptografia (chave errada e dado adulterado **devem** falhar),
 cofre e papéis, merge/sincronização com exclusões, regras de dose e agenda,
 renderização de **todas as telas** em DOM real (inclusive para perfil restrito),
-**ingestão Amil** (reconhecer tipo, extrair campos e **não duplicar** ao reimportar)
+**ingestão Amil** (reconhecer tipo, extrair campos e **não duplicar** ao reimportar),
+**Modo consulta** (deduzir a especialidade e garantir que **nenhum exame fica órfão**)
 e invariantes de segurança (nada sensível legível no armazenamento).
 
 ---
@@ -207,7 +226,7 @@ assets/
     ingest.js               reconhece e extrai documentos da Amil, concilia lotes
     ui.js                   componentes, formatação, roteador
     main.js                 fluxo de entrada e inicialização
-    views/                  13 telas do app (inclui Amil)
+    views/                  14 telas do app (inclui Consulta e Amil)
 docs/
   seguranca.md              modelo de segurança e ameaças
   guia-da-familia.md        manual curto para quem vai usar

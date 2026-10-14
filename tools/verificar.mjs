@@ -10,6 +10,7 @@
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, dirname, resolve, relative } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const RAIZ = resolve(process.argv[2] || '.');
 const problemas = [];
@@ -155,6 +156,23 @@ for (const arquivo of arquivos) {
   const fecha = (codigo.match(/<\/div>/g) || []).length;
   if (rel.includes('views') && abre !== fecha) {
     avisos.push(`${rel} tags <div> desbalanceadas: ${abre} abre / ${fecha} fecha (pode ser string condicional)`);
+  }
+}
+
+/* ---- sintaxe: um arquivo que não parseia derruba o app inteiro ---- *
+ * Este bloco existe por causa de um caso real: `main.js` ficou com um
+ * fragmento duplicado no fim do arquivo. O app não inicializava, mas os
+ * testes passavam, porque eles importam cada view direto e nunca carregam o
+ * main.js. Nenhuma checagem anterior era capaz de ver isso.
+ */
+for (const arquivo of arquivos) {
+  const rel = relative(RAIZ, arquivo);
+  try {
+    execFileSync(process.execPath, ['--check', arquivo], { stdio: 'pipe' });
+  } catch (e) {
+    const saida = String(e.stderr || e.message || '').split('\n')
+      .filter((l) => /SyntaxError|^\s*\^/.test(l))[0] || 'erro de sintaxe';
+    problemas.push(`${rel}: ${saida.trim()}`);
   }
 }
 

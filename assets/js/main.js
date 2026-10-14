@@ -34,6 +34,7 @@ import * as documentos from './views/documentos.js';
 import * as mural from './views/mural.js';
 import * as dor from './views/dor.js';
 import * as amil from './views/amil.js';
+import * as consulta from './views/consulta.js';
 import * as equipe from './views/equipe.js';
 import * as auditoria from './views/auditoria.js';
 import * as ajustes from './views/ajustes.js';
@@ -48,6 +49,7 @@ const MENU = [
   { rota: 'medicamentos', titulo: 'Medicações', icone: '💊', def: medicamentos },
   { rota: 'sinais',       titulo: 'Sinais',     icone: '📈', def: sinais },
   { rota: 'exames',       titulo: 'Exames',     icone: '🔬', def: exames },
+  { rota: 'consulta',     titulo: 'Consulta',   icone: '🩺', def: consulta },
   { rota: 'documentos',   titulo: 'Documentos', icone: '📄', def: documentos },
   { rota: 'mural',        titulo: 'Mural',      icone: '💬', def: mural },
   { rota: 'dor',          titulo: 'Rede D\'Or', icone: '🏥', def: dor },
@@ -414,4 +416,3 @@ boot();
 
 /* expõe para depuração no console do navegador */
 window.TERUEL = { estado, sessao, sair, irPara, paramsAtuais };
-sao, sair, irPara, paramsAtuais };

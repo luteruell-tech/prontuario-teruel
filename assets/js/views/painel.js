@@ -109,6 +109,22 @@ export function render(host) {
     + '<div class="section-title">Como estão hoje</div>'
     + '<div class="grid grid-2">' + estado.pacientes.map(cartaoPaciente).join('') + '</div>'
 
+    /* ---- atalho para a consulta ---- */
+    + '<div class="card card-pad" style="border-left:6px solid var(--info)">'
+    +   '<div class="row-between" style="align-items:flex-start;gap:12px">'
+    +     '<div>'
+    +       '<div class="strong">🩺 Vai ao médico hoje?</div>'
+    +       '<p class="small muted" style="margin:5px 0 0">Abra o <b>Modo consulta</b>: os exames já '
+    +       'organizados por especialidade — imagem, laboratoriais e demais — com o resumo no topo. '
+    +       'Funciona sem internet.</p>'
+    +     '</div>'
+    +   '</div>'
+    +   '<div class="btn-row" style="margin-top:11px">'
+    +     estado.pacientes.map((p) => '<button class="btn btn-sm btn-soft" data-consulta="' + esc(p.id) + '">'
+        + (p.avatarEmoji || '👤') + ' ' + esc(p.nome.split(' ')[0]) + '</button>').join('')
+    +   '</div>'
+    + '</div>'
+
     /* ---- mural fixado ---- */
     + (muralFixado.length
       ? '<div class="section-title">📌 Recados fixados</div>'
@@ -131,6 +147,9 @@ export function render(host) {
   host.addEventListener('click', (ev) => {
     const ir = ev.target.closest('[data-ir]');
     if (ir) { irPara(ir.dataset.ir); return; }
+
+    const con = ev.target.closest('[data-consulta]');
+    if (con) { irPara('consulta', { paciente: con.dataset.consulta }); return; }
 
     const dose = ev.target.closest('[data-dose]');
     if (dose) { registrarDose(dose.dataset.dose, dose.dataset.janela, host); return; }

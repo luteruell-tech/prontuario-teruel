@@ -449,7 +449,17 @@ canvas { display: block; width: 100% !important; }
 
 /* =============================================================== print ==== */
 @media print {
-  .topbar, .nav, .btn, .toasts, .install-bar { display: none !important; }
-  body { background: #fff; }
-  .card { box-shadow: none; border-color: #999; break-inside: avoid; }
+  .topbar, .nav, .btn, .toasts, .install-bar, .no-print { display: none !important; }
+  body { background: #fff; color: #000; }
+  .wrap { padding: 0 !important; max-width: none; }
+  .page { padding: 0 !important; }
+  .card { box-shadow: none; border: 1px solid #bbb; break-inside: avoid; }
+  .card-head { background: #f2f2f2 !important; }
+  .section-title { border-bottom: 1px solid #999; padding-bottom: 3px; }
+  .pill { border: 1px solid #999 !important; color: #000 !important; background: #fff !important; }
+  .note { border: 1px solid #999; background: #fafafa !important; }
+  table.table th, table.table td { border-color: #bbb; }
+  details { display: block; }
+  details > summary { list-style: none; }
+  a[href]::after { content: ''; }
 }

@@ -21,6 +21,14 @@ const CATEGORIAS = {
   outro:        { nome: 'Outro',        icone: '📋', pill: '' },
 };
 
+/** Especialidades sugeridas — alimentam o agrupamento do Modo consulta. */
+export const AREAS_SUGERIDAS = [
+  'Neurologia', 'Cardiologia', 'Pneumologia', 'Gastroenterologia', 'Ortopedia',
+  'Nefrologia', 'Endocrinologia', 'Hematologia', 'Oftalmologia',
+  'Otorrinolaringologia', 'Psiquiatria', 'Geriatria', 'Oncologia', 'Infectologia',
+  'Clínica geral',
+];
+
 let busca = '';
 let fPac = '';
 let fCat = '';
@@ -57,6 +65,7 @@ export function render(host, params) {
     else if (a === 'editar') formExame(porId('exames', ac.dataset.id));
     else if (a === 'excluir') excluir(ac.dataset.id, host);
     else if (a === 'ver-doc') verDoc(ac.dataset.doc);
+    else if (a === 'consulta') irPara('consulta', { paciente: ac.dataset.pac });
   });
 }
 
@@ -167,8 +176,9 @@ function cartaoExame(e) {
         + '<br><span class="tiny">Leve ao conhecimento do médico assistente. Não altere medicação por conta própria.</span></div></div>'
       : '')
 
-    + '<div class="card-foot row-wrap">'
+    +   '<div class="card-foot row-wrap">'
     +   (e.documentoId ? '<button class="btn btn-sm btn-soft" data-acao="ver-doc" data-doc="' + esc(e.documentoId) + '">📄 Abrir laudo</button>' : '')
+    +   '<button class="btn btn-sm btn-ghost" data-acao="consulta" data-pac="' + esc(e.pacienteId) + '">🩺 Ver na consulta</button>'
     +   (pode('escrever') ? '<button class="btn btn-sm btn-ghost" data-acao="editar" data-id="' + esc(e.id) + '">✏️ Editar</button>' : '')
     +   (pode('excluir') ? '<button class="btn btn-sm btn-danger-soft" data-acao="excluir" data-id="' + esc(e.id) + '">🗑 Excluir</button>' : '')
     +   '<span class="grow"></span>'

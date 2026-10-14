@@ -32,6 +32,7 @@ const ESSENCIAIS = [
   './assets/js/views/medicamentos.js',
   './assets/js/views/sinais.js',
   './assets/js/views/exames.js',
+  './assets/js/views/consulta.js',
   './assets/js/views/documentos.js',
   './assets/js/views/mural.js',
   './assets/js/views/dor.js',

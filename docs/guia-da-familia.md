@@ -159,6 +159,17 @@ coletor não adivinha código.
 > Combinado do canal: **na dúvida, escreva no mural antes de agir.** É isso que
 > faz todos falarem a mesma língua.
 
+### 🩺 Modo consulta — a tela para mostrar ao médico
+- Abra **Consulta** (ou o atalho no Painel: *"Vai ao médico hoje?"*).
+- Escolha o paciente e depois a **especialidade** do médico. O app mostra os
+  exames que cabem àquela área — **imagem, laboratoriais e demais**.
+- Você não precisa organizar nada: ele **deduz a especialidade pelo nome do
+  exame** (Ressonância de crânio → Neurologia, Hemograma → Hematologia).
+- **Nada fica escondido:** embaixo sempre tem *"Também no prontuário"* com os
+  exames das outras áreas, e a aba **Tudo** mostra o acervo inteiro.
+- **🖨 Imprimir / salvar PDF** antes de ir — leva a via em papel para anexar.
+- Funciona **sem internet** (importante em hospital, onde o sinal é ruim).
+
 ### 🩺 Prontuário — para a consulta
 - **Resumo:** mostra tudo o que o médico precisa, numa tela.
 - **Imprimir resumo** antes de ir (ou mostre o celular na hora).

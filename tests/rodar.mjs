@@ -604,6 +604,7 @@ async function testarTelas() {
     ['medicamentos', await import('../assets/js/views/medicamentos.js')],
     ['sinais', await import('../assets/js/views/sinais.js')],
     ['exames', await import('../assets/js/views/exames.js')],
+    ['consulta', await import('../assets/js/views/consulta.js')],
     ['documentos', await import('../assets/js/views/documentos.js')],
     ['mural', await import('../assets/js/views/mural.js')],
     ['dor', await import('../assets/js/views/dor.js')],
@@ -821,6 +822,57 @@ async function testarIngestao() {
 }
 
 /* ==========================================================================
+ * 6c. Modo consulta — agrupar exames por especialidade
+ * --------------------------------------------------------------------------
+ * O requisito da família: o médico vê os exames QUE LHE CABEM, e nenhum
+ * exame de imagem, laboratorial ou outro pode ficar escondido.
+ * ======================================================================== */
+async function testarConsulta() {
+  grupoDe('6c. Modo consulta — especialidade, sem esconder exame');
+
+  const C = await import('../assets/js/views/consulta.js');
+
+  // ---- dedução da área pelo nome do exame ------------------------------
+  igual(C.areaDoExame({ titulo: 'Ressonância magnética de crânio' }), 'Neurologia',
+    'deduz Neurologia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'Ecocardiograma transtorácico' }), 'Cardiologia',
+    'deduz Cardiologia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'USG de abdome total' }), 'Gastroenterologia',
+    'deduz Gastroenterologia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'Hemograma completo' }), 'Hematologia',
+    'deduz Hematologia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'Creatinina' }), 'Nefrologia',
+    'deduz Nefrologia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'Radiografia de coluna lombar' }), 'Ortopedia',
+    'deduz Ortopedia pelo nome do exame');
+  igual(C.areaDoExame({ titulo: 'TSH ultra sensível' }), 'Endocrinologia',
+    'deduz Endocrinologia pelo nome do exame');
+
+  // ---- o campo explícito sempre vence a dedução ------------------------
+  igual(C.areaDoExame({ titulo: 'Ressonância de crânio', area: 'Geriatria' }), 'Geriatria',
+    'o campo "área" digitado pela família tem prioridade sobre a dedução');
+
+  // ---- exame sem pista nenhuma cai em Clínica geral --------------------
+  igual(C.areaDoExame({ titulo: 'Documento avulso sem nome clínico' }), 'Clínica geral',
+    'exame sem pista reconhecível cai em Clínica geral (nunca desaparece)');
+  igual(C.areaDoExame({}), 'Clínica geral', 'exame vazio não lança exceção');
+
+  // ---- toda área tem ícone ---------------------------------------------
+  ok(C.iconeDaArea('Neurologia').length > 0, 'área conhecida devolve ícone');
+  ok(C.iconeDaArea('Área Inexistente').length > 0, 'área desconhecida devolve ícone padrão');
+
+  // ---- invariante: nenhum exame fica sem área --------------------------
+  const amostra = [
+    { titulo: 'Ressonância magnética de crânio' },
+    { titulo: 'Hemograma completo' },
+    { titulo: 'Eletrocardiograma' },
+    { titulo: 'Exame com nome estranho 123' },
+  ];
+  ok(amostra.every((e) => !!C.areaDoExame(e)),
+    'todo exame recebe uma área — nenhum fica órfão');
+}
+
+/* ==========================================================================
  * Execução
  * ======================================================================== */
 (async () => {
@@ -836,6 +888,7 @@ async function testarIngestao() {
     await testarRegras();
     await testarTelas();
     await testarIngestao();
+    await testarConsulta();
     await testarSeguranca();
   } catch (e) {
     console.error('\n\x1b[31mErro inesperado na bateria:\x1b[0m', e);

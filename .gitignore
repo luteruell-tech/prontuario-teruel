@@ -1,0 +1,15 @@
+# dependências (jsdom é só para os testes)
+node_modules/
+package-lock.json
+
+# artefatos locais
+.wrangler/
+dist/
+*.log
+dbg-tmp.mjs
+probe-tmp.mjs
+
+# arquivos de dados do usuário — NUNCA versionar
+*.teruel
+canal-teruel-*.teruel
+convite-teruel-*.json

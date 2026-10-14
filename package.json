@@ -1,0 +1,29 @@
+{
+  "name": "webapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sw.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node tests/rodar.mjs",
+    "verificar": "node tools/verificar.mjs",
+    "servir": "python3 -m http.server 8080"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luteruell-tech/prontuario-teruel.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luteruell-tech/prontuario-teruel/issues"
+  },
+  "homepage": "https://github.com/luteruell-tech/prontuario-teruel#readme",
+  "dependencies": {
+    "jsdom": "^30.1.2"
+  },
+  "type": "module"
+}

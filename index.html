@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Canal Teruel · Acompanhamento de Maria Izaulina e João Teruel</title>
+<meta name="description" content="Canal privado da família para acompanhar consultas, exames, internações, medicações e documentos de Maria Izaulina e João Teruel. Dados cifrados no aparelho.">
+
+<!-- PWA -->
+<meta name="theme-color" content="#1440BE">
+<meta name="color-scheme" content="light">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Canal Teruel">
+
+<!-- Nada de recurso externo: privacidade e funcionamento offline -->
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<!-- conteúdo inicial (trocado pelo JS já na primeira execução) -->
+<noscript>
+  <div class="gate"><div class="gate-card"><div class="gate-top">
+    <div class="gate-mark">🔐</div>
+    <div class="gate-title">Canal Teruel</div>
+    <div class="gate-sub">Este aplicativo precisa de JavaScript ativado, porque toda a proteção
+      dos dados acontece no seu aparelho (criptografia local).</div>
+  </div></div></div>
+</noscript>
+
+<div class="app">
+  <main class="page">
+    <div class="wrap">
+      <div class="card card-pad stack" style="max-width:520px;margin:8vh auto 0">
+        <div class="row" style="gap:12px">
+          <div class="brand-mark">🩺</div>
+          <div><div class="strong">Carregando o canal…</div>
+          <div class="small muted">Abrindo o cofre com a chave deste aparelho.</div></div>
+        </div>
+        <div class="skel" style="height:44px"></div>
+        <div class="skel" style="height:120px"></div>
+        <div class="skel" style="height:64px"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

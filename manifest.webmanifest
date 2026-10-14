@@ -1,0 +1,49 @@
+{
+  "name": "Canal Teruel — Acompanhamento de Maria Izaulina e João Teruel",
+  "short_name": "Canal Teruel",
+  "description": "Canal privado da família: consultas, exames, internações, medicações, sinais vitais e documentos reunidos num só lugar, com os dados cifrados no aparelho.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#F2F4F9",
+  "theme_color": "#1440BE",
+  "categories": ["health", "medical", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Medicações de hoje",
+      "short_name": "Medicações",
+      "url": "./index.html#/medicamentos",
+      "description": "Ver e registrar as doses do dia"
+    },
+    {
+      "name": "Agenda",
+      "short_name": "Agenda",
+      "url": "./index.html#/agenda",
+      "description": "Próximas consultas, exames e terapias"
+    },
+    {
+      "name": "Mural da família",
+      "short_name": "Mural",
+      "url": "./index.html#/mural",
+      "description": "Recados e escalas de acompanhamento"
+    }
+  ]
+}

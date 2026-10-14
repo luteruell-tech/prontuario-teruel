@@ -15,6 +15,8 @@ Feito para uma família que cuida a distância e se divide entre várias pessoas
 |---|---|
 | "Quem deu o remédio da mãe hoje?" | Tela **Medicações** com doses do dia, quem registrou e desfazer |
 | "Que exame ficou de sair?" | **Central Rede D'Or** com acompanhamento do que falta e o que já foi baixado |
+| "Baixo tudo um por um e o painel desatualiza" | **Amil**: importa **vários documentos de uma vez**, extrai senha/procedimentos/valores sozinho e concilia sem duplicar |
+| "Qual a senha de autorização do exame?" | **Amil** lê a guia e guarda número, **senha** e validade — pronto para mostrar no laboratório |
 | "Os papéis estão cada um numa casa" | **Documentos**: laudos, receitas e relatórios num cofre único |
 | "Ninguém sabe o que o médico falou" | **Prontuário** por paciente + anotação do atendimento na agenda |
 | "Meu irmão não sabia da mudança" | **Mural** da família com avisos, escalas e recados fixados |
@@ -24,7 +26,7 @@ Feito para uma família que cuida a distância e se divide entre várias pessoas
 ## Telas
 
 `Painel` · `Agenda` · `Prontuário` · `Medicações` · `Sinais` · `Exames` ·
-`Documentos` · `Mural` · `Rede D'Or` · `Equipe` · `Auditoria` · `Ajustes`
+`Documentos` · `Mural` · `Rede D'Or` · `Amil` · `Equipe` · `Auditoria` · `Ajustes`
 
 ---
 
@@ -105,6 +107,56 @@ baixa o que saiu, importa aqui e marca como reunido.
 
 ---
 
+## Amil — parar de alimentar o painel à mão
+
+O painel antigo exigia baixar **um arquivo por vez** e digitar tudo. Este app
+resolve isso com **importação em lote com conciliação**.
+
+**O que a Amil oferece, verificado:**
+
+| Canal | Existe? | Serve para a família? |
+|---|---|---|
+| Portal do Beneficiário (Meu Amil) | ✅ | sim — extrato, boletos, carteirinha, reembolsos |
+| App **Amil Clientes** (`br.com.amil.beneficiarios`) | ✅ | sim — boletos, reembolsos, carteirinha/token |
+| Portal do Desenvolvedor do Grupo Amil | ✅ | **não** — é B2B, exige ID e segredo de "desenvolvedor habilitado" |
+| API pública para pessoa física | ❌ | não existe |
+
+**Por que não há "bot de login" dentro do app** — três barreiras técnicas, não
+uma escolha de estilo:
+
+1. **CORS**: o navegador proíbe um site de ler respostas de outro domínio.
+2. **Sem servidor**: um app que roda no aparelho não tem onde manter uma sessão
+   logada em outro site.
+3. **Dupla verificação**: a Amil pede um código que **uma pessoa** confirma.
+
+Prometer login automático significaria guardar a senha dos seus pais em texto
+claro e burlar a proteção — expondo justamente quem se quer proteger.
+
+**O que o app faz, de verdade:**
+
+1. **Importa vários documentos de uma vez** (PDFs, CSVs, guias, reembolsos,
+   carteirinha) e reconhece o tipo de cada um.
+2. **Extrai sozinho**: senha e validade da guia, procedimento, valores do extrato,
+   protocolo do reembolso — **sem digitar nada**.
+3. **Concilia**: importar o mesmo período de novo **não duplica**.
+4. **Arquiva** o original cifrado e liga ao registro correspondente.
+5. Guarda as credenciais do Meu Amil **cifradas** no cofre.
+
+**Coletor assistido** — a automação de verdade, rodando **no seu computador**:
+
+```bash
+npm install
+npx playwright install chromium
+npm run coletar -- --paciente maria --desde 2026-01-01 --saida lote-maria.teruellote
+```
+
+Você faz o login (e a verificação) **uma vez**; a sessão fica salva localmente e
+ele junta tudo num lote. Depois é só **Amil → Importar**.
+
+Detalhes em [`docs/automacao-amil.md`](docs/automacao-amil.md).
+
+---
+
 ## Rodar localmente
 
 Requer apenas um servidor estático (por causa dos módulos ES e do service worker):
@@ -129,13 +181,14 @@ costuma falhar na hora da consulta.
 
 ```bash
 npm run verificar       # integridade de imports/exports
-npm test                # 180+ asserções (Node + jsdom + WebCrypto real)
+npm test                # 227 asserções (Node + jsdom + WebCrypto real)
 ```
 
 A suíte cobre: criptografia (chave errada e dado adulterado **devem** falhar),
 cofre e papéis, merge/sincronização com exclusões, regras de dose e agenda,
-renderização de **todas as telas** em DOM real (inclusive para perfil restrito) e
-invariantes de segurança (nada sensível legível no armazenamento).
+renderização de **todas as telas** em DOM real (inclusive para perfil restrito),
+**ingestão Amil** (reconhecer tipo, extrair campos e **não duplicar** ao reimportar)
+e invariantes de segurança (nada sensível legível no armazenamento).
 
 ---
 
@@ -151,15 +204,19 @@ assets/
     crypto.js               AES-GCM, PBKDF2, HKDF — o núcleo de segurança
     store.js                modelo de dados, persistência, merge/sincronização
     auth.js                 PIN por membro, papéis, sessão, convites
+    ingest.js               reconhece e extrai documentos da Amil, concilia lotes
     ui.js                   componentes, formatação, roteador
     main.js                 fluxo de entrada e inicialização
-    views/                  12 telas do app
+    views/                  13 telas do app (inclui Amil)
 docs/
   seguranca.md              modelo de segurança e ameaças
   guia-da-familia.md        manual curto para quem vai usar
+  automacao-amil.md         o que a Amil permite e como importar em lote
 legacy/
   prontuario-exames.html    prontuário original de exames (preservado)
-tools/verificar.mjs         checagem de integridade do código
+tools/
+  verificar.mjs             checagem de integridade do código
+  coletor.mjs               coletor assistido do Meu Amil (roda no seu PC)
 tests/rodar.mjs             bateria de testes
 ```
 

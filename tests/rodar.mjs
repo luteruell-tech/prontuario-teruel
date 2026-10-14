@@ -582,6 +582,19 @@ async function testarTelas() {
     id: 'dm-1', pacienteId: 'pac-joao', titulo: 'Ressonância de crânio', status: 'aguardando',
     solicitadoEm: '2026-03-01', previsao: '2026-03-10', unidade: 'Hospital São Luiz',
   }];
+  // Amil — dados para a tela renderizar (autorização, extrato e carteirinha)
+  store.estado.amil.guias = [{
+    id: 'ag-1', beneficiario: 'João Teruel', procedimento: 'Ressonância magnética de crânio',
+    numero: '123456', senha: 'Q7X9', validade: '2030-01-01', prestador: 'Hospital São Luiz',
+  }];
+  store.estado.amil.faturas = [{
+    id: 'af-1', beneficiario: 'Maria Izaulina', referencia: '02/2026', protocolo: '778899',
+    itens: [{ data: '2026-02-01', procedimento: 'Consulta cardiologia', valor: 350 }], total: 350,
+  }];
+  store.estado.amil.carteirinhas = [{
+    id: 'ac-1', beneficiario: 'Maria Izaulina', carteira: '998877', plano: 'Amil One 400',
+    acomodacao: 'Apartamento', validade: '2030-12-31',
+  }];
   await store.salvar(true);
 
   const telas = [
@@ -594,6 +607,7 @@ async function testarTelas() {
     ['documentos', await import('../assets/js/views/documentos.js')],
     ['mural', await import('../assets/js/views/mural.js')],
     ['dor', await import('../assets/js/views/dor.js')],
+    ['amil', await import('../assets/js/views/amil.js')],
     ['equipe', await import('../assets/js/views/equipe.js')],
     ['auditoria', await import('../assets/js/views/auditoria.js')],
     ['ajustes', await import('../assets/js/views/ajustes.js')],
@@ -704,6 +718,109 @@ async function testarSeguranca() {
 }
 
 /* ==========================================================================
+ * 6b. Ingestão de documentos do convênio (Amil)
+ * ======================================================================== */
+async function testarIngestao() {
+  grupoDe('6b. Ingestão Amil — reconhecer, extrair e conciliar sem digitar');
+  const I = await import('../assets/js/ingest.js');
+
+  // ---- datas e valores em pt-BR ----
+  igual(I.paraIso('30/03/2026'), '2026-03-30', 'data dd/mm/aaaa vira ISO');
+  igual(I.paraIso('2026-03-30'), '2026-03-30', 'data ISO permanece ISO');
+  igual(I.paraIso('05/02/26'), '2026-02-05', 'ano de 2 dígitos é completado');
+  igual(I.valorNumerico('R$ 1.234,56'), 1234.56, 'valor pt-BR com milhar e centavos');
+
+  // ---- reconhecimento do tipo ----
+  const txtExtrato = 'EXTRATO DE UTILIZAÇÃO\nBeneficiário: Maria Izaulina\n'
+    + 'Data;Procedimento;Valor Pago\n01/02/2026;Consulta cardiologia;R$ 350,00\n05/02/2026;Hemograma;R$ 120,50';
+  igual(I.detectarTipo(txtExtrato, 'extrato.pdf').tipo, 'extrato', 'reconhece extrato de utilização');
+
+  const txtGuia = 'GUIA SP/SADT\nNúmero da Guia: 123456\nSenha de Autorização: Q7X9\n'
+    + 'Validade da Senha: 30/03/2026\nProcedimento: Ressonância de crânio\nPrestador: Hospital São Luiz';
+  igual(I.detectarTipo(txtGuia, 'guia.pdf').tipo, 'guia', 'reconhece guia de autorização');
+
+  const txtCart = 'Número do Beneficiário: 998877\nBeneficiário: Maria Izaulina\nPlano: Amil One 400\n'
+    + 'Acomodação: Apartamento\nValidade: 31/12/2026\nRegistro ANS: 326305';
+  igual(I.detectarTipo(txtCart, 'carteirinha.png').tipo, 'carteirinha', 'reconhece carteirinha');
+
+  const txtReemb = 'Demonstrativo de Reembolso\nProtocolo: 778899\n10/01/2026 Consulta neurologia R$ 400,00';
+  igual(I.detectarTipo(txtReemb, 'reembolso.pdf').tipo, 'reembolso', 'reconhece demonstrativo de reembolso');
+
+  igual(I.detectarTipo('Bilhete qualquer sem nada do convênio', 'x.txt').tipo, 'desconhecido',
+    'texto sem assinatura fica como desconhecido');
+
+  // ---- extração de campos ----
+  const g = I.parseGuia(txtGuia);
+  igual(g.numero, '123456', 'guia: número lido');
+  igual(g.senha, 'Q7X9', 'guia: senha lida');
+  igual(g.validade, '2026-03-30', 'guia: validade convertida para ISO');
+  ok(/Ressonância/.test(g.procedimento), 'guia: procedimento lido');
+  igual(g.prestador, 'Hospital São Luiz', 'guia: prestador lido');
+
+  const ex = I.parseExtrato(txtExtrato);
+  igual(ex.itens.length, 2, 'extrato CSV: duas linhas viram dois itens');
+  igual(ex.itens[0].procedimento, 'Consulta cardiologia', 'extrato CSV: procedimento por coluna');
+  igual(ex.itens[0].valor, 350, 'extrato CSV: valor por coluna');
+  igual(Math.round(ex.total * 100) / 100, 470.5, 'extrato CSV: total somado');
+
+  const c = I.parseCarteirinha(txtCart);
+  igual(c.carteira, '998877', 'carteirinha: número do beneficiário');
+  igual(c.acomodacao, 'Apartamento', 'carteirinha: acomodação');
+  igual(c.ans, '326305', 'carteirinha: registro ANS');
+
+  const rr = I.parseReembolso(txtReemb);
+  igual(rr.protocolo, '778899', 'reembolso: protocolo lido');
+
+  // extrato em texto corrido (sem CSV) — formato de PDF do portal
+  const exTxt = I.parseExtrato('Extrato de utilização\n01/03/2026 Consulta geriatria R$ 300,00\n'
+    + '15/03/2026 Fisioterapia R$ 90,00');
+  igual(exTxt.itens.length, 2, 'extrato em texto corrido também é lido');
+
+  // ---- conciliação: importar de novo NÃO duplica ----
+  const u = { data: '2026-02-01', procedimento: 'Consulta cardiologia', valor: 350 };
+  const ja = [{ id: 'f1', itens: [u], atualizadoEm: 5 }];
+  const r1 = I.conciliar(ja, [{ id: 'f2', itens: [u, { data: '2026-02-05', procedimento: 'Hemograma', valor: 120.5 }], atualizadoEm: 6 }]);
+  igual(r1.novos.length, 1, 'extrato novo é reconhecido como novo');
+  igual(r1.novos[0].itens.length, 1, 'linha já existente NÃO é reimportada');
+  igual(r1.novos[0].itensDescartados, 1, 'linha repetida é contabilizada como descartada');
+  igual(I.conciliar(ja, [{ id: 'f1', itens: [], atualizadoEm: 9 }]).atualizados.length, 1,
+    'mesmo id com data mais nova é atualizado');
+  igual(I.conciliar(ja, [{ id: 'f1', itens: [], atualizadoEm: 1 }]).iguais.length, 1,
+    'mesmo id com data mais antiga é ignorado');
+
+  // ---- classificação em lote (o que faz o "importar vários de uma vez") ----
+  const lote = await I.classificarItens([
+    { nome: 'guia.pdf', mime: 'application/pdf', texto: txtGuia, base64: 'AA==' },
+    { nome: 'extrato.csv', mime: 'text/csv', texto: txtExtrato, base64: 'AA==' },
+    { nome: 'carteirinha.txt', mime: 'text/plain', texto: txtCart, base64: 'AA==' },
+    { nome: 'aleatorio.txt', mime: 'text/plain', texto: 'nada reconhecível aqui', base64: 'AA==' },
+  ]);
+  igual(lote.guias.length, 1, 'lote: uma guia classificada');
+  igual(lote.faturas.length, 1, 'lote: um extrato classificado');
+  igual(lote.carteirinhas.length, 1, 'lote: uma carteirinha classificada');
+  igual(lote.desconhecidos.length, 1, 'lote: arquivo sem tipo vai para desconhecidos');
+  igual(lote.originais.length, 4, 'lote: todos os originais são preservados para arquivar');
+
+  // ---- lote (.teruellote) e base64 ----
+  const bytes = new Uint8Array([0, 1, 127, 128, 255]);
+  ok(I.b64ParaBytes(I.bytesParaB64(bytes)).every((v, i) => v === bytes[i]),
+    'base64 do lote preserva todos os bytes');
+  const l = I.montarLote([{ nome: 'x.pdf', mime: 'application/pdf', base64: 'AA==' }], 'teste');
+  igual(l.tipo, 'teruel-lote', 'lote tem tipo próprio');
+  igual(I.validarLote(l).itens.length, 1, 'lote válido é aceito');
+  await lanca(() => I.validarLote({ tipo: 'outra-coisa' }), 'lote de outro app é rejeitado', 'não é um lote');
+  await lanca(() => I.validarLote({ tipo: 'teruel-lote', itens: [{ nome: 'sem' }] }),
+    'item de lote sem conteúdo é rejeitado', 'sem conteúdo');
+
+  // ---- extração de texto de PDF simples (sem compressão) ----
+  const pdf = '%PDF-1.4\n4 0 obj<</Length 62>>\nstream\n'
+    + 'BT /F1 12 Tf 72 720 Td (GUIA SP/SADT Numero da Guia: 123456) Tj ET\n'
+    + 'endstream\nendobj\n%%EOF';
+  const txtPdf = await I.extrairTextoPdf(new TextEncoder().encode(pdf));
+  ok(/GUIA/.test(txtPdf), 'extrai texto de PDF sem compressão', txtPdf.slice(0, 60));
+}
+
+/* ==========================================================================
  * Execução
  * ======================================================================== */
 (async () => {
@@ -718,6 +835,7 @@ async function testarSeguranca() {
     await testarMerge();
     await testarRegras();
     await testarTelas();
+    await testarIngestao();
     await testarSeguranca();
   } catch (e) {
     console.error('\n\x1b[31mErro inesperado na bateria:\x1b[0m', e);

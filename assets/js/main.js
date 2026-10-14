@@ -33,6 +33,7 @@ import * as sinais from './views/sinais.js';
 import * as documentos from './views/documentos.js';
 import * as mural from './views/mural.js';
 import * as dor from './views/dor.js';
+import * as amil from './views/amil.js';
 import * as equipe from './views/equipe.js';
 import * as auditoria from './views/auditoria.js';
 import * as ajustes from './views/ajustes.js';
@@ -50,6 +51,7 @@ const MENU = [
   { rota: 'documentos',   titulo: 'Documentos', icone: '📄', def: documentos },
   { rota: 'mural',        titulo: 'Mural',      icone: '💬', def: mural },
   { rota: 'dor',          titulo: 'Rede D\'Or', icone: '🏥', def: dor },
+  { rota: 'amil',         titulo: 'Amil',       icone: '💙', def: amil },
   { rota: 'equipe',       titulo: 'Equipe',     icone: '👥', def: equipe, permissao: 'gerirEquipe' },
   { rota: 'auditoria',    titulo: 'Auditoria',  icone: '📋', def: auditoria, permissao: 'verAuditoria' },
   { rota: 'ajustes',      titulo: 'Ajustes',    icone: '⚙️', def: ajustes },
@@ -412,3 +414,4 @@ boot();
 
 /* expõe para depuração no console do navegador */
 window.TERUEL = { estado, sessao, sair, irPara, paramsAtuais };
+sao, sair, irPara, paramsAtuais };

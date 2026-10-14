@@ -169,6 +169,27 @@ notas), reúne os atalhos oficiais e **importa os laudos** que o paciente baixa 
 portal. O resultado prático para a família é o mesmo — acervo único, atualizado e
 seguro — sem ninguém precisar confiar a senha a um robô.
 
+## 10b. Amil — mesma decisão, com importação em lote
+
+Vale o mesmo raciocínio da Rede D'Or. O que muda é o esforço de alimentar o painel:
+
+| Camada | Como funciona |
+|---|---|
+| Reconhecimento e extração | `assets/js/ingest.js` lê os documentos **no aparelho**, sem rede |
+| Conciliação | compara por data+procedimento+valor e por número/senha de guia — **não duplica** |
+| Arquivo | o original entra cifrado em Documentos, com a chave própria do documento |
+| Coletor (`tools/coletor.mjs`) | roda **no computador da família**; a sessão fica numa pasta local; **nenhuma senha é gravada** nem enviada a servidor |
+
+Barreiras que impedem login automático **dentro do app** (técnicas, não de estilo):
+**CORS** (o navegador proíbe a leitura cross-origin), **ausência de servidor**
+(não há onde manter sessão), e **verificação em duas etapas** (exige uma pessoa).
+O Portal do Desenvolvedor do Grupo Amil é B2B (ID e segredo de parceiro habilitado);
+não há API pública para pessoa física.
+
+Consequência de segurança: o app **nunca** guarda a senha em texto claro nem a
+transmite. O login, quando existe, é do coletor, na máquina do usuário, e o dado
+que circula é o arquivo que a própria família gerou.
+
 ## 11. Verificação
 
 ```bash

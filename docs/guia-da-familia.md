@@ -114,6 +114,41 @@ Ele guarda a senha cifrada em **Acesso e senha** (melhor que no bloco de notas) 
 importa os laudos que vocês baixam. Automatizar o login quebraria os termos de uso
 do convênio e exporia a senha de vocês.
 
+### 💙 Amil — extrato, autorizações e carteirinha
+
+Aqui está a diferença que resolve o problema de "baixar um por um": dá para trazer
+**vários arquivos de uma vez** e o app entende cada um sozinho.
+
+**O jeito mais rápido (toda semana):**
+1. Entre no **Meu Amil** (portal ou app) e baixe o que precisar:
+   extrato do mês, guias/autorizações, demonstrativos de reembolso, carteirinha.
+2. No Canal Teruel: **Amil → Importar → Escolher arquivos**.
+3. Selecione **tudo de uma vez** (pode misturar PDF e CSV).
+4. O app mostra o que reconheceu. Confirme. Pronto.
+
+O que ele lê **sem você digitar nada**:
+- **Guia:** número, **senha de autorização**, validade, procedimento, onde vai ser feito.
+- **Extrato:** cada procedimento com data e valor, e o total.
+- **Reembolso:** protocolo e quanto foi pago.
+- **Carteirinha:** número do beneficiário, plano, acomodação, validade.
+
+> **Pode importar o mesmo período de novo sem medo:** o app compara e **não
+> duplica** nada. Guias repetidas são atualizadas, não copiadas.
+
+**A senha do Meu Amil:** guarde cifrada em **Amil → Acesso e senha**. Como seus pais
+não guardam de cabeça, fica tudo ali — CPF, número do beneficiário, senha —,
+legível só com o PIN de vocês.
+
+**Quer que baixe sozinho, em lote?** Use o **coletor** no computador (Amil →
+Importar → "Como funciona o coletor"): você faz o login uma vez e ele junta tudo
+num arquivo só para importar. O login e a verificação são sempre **seus** — o
+coletor não adivinha código.
+
+> O app **não** faz login automático no Meu Amil por três motivos técnicos: o
+> navegador bloqueia a conversa entre sites, o app não tem servidor para manter
+> sessão, e a Amil pede um código que **uma pessoa** confirma. Por isso o jeito é
+> importar (em lote) ou usar o coletor — nunca fingir que um robô entrou na conta.
+
 ### 💬 Mural — o canal de vocês
 - **Aviso:** coisa importante para todos.
 - **Recado:** combinado do dia a dia.

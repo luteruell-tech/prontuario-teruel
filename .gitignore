@@ -13,3 +13,9 @@ probe-tmp.mjs
 *.teruel
 canal-teruel-*.teruel
 convite-teruel-*.json
+*.teruellote
+lote-*.teruellote
+
+# sessão local do coletor (contém login) — NUNCA versionar
+.collector-profile/
+downloads-amil/

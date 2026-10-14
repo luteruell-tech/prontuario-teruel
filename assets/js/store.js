@@ -120,6 +120,10 @@ export function estadoInicial() {
     diario: [],         // evolução clínica relatada (o "como ela está hoje")
     auditoria: [],      // quem fez o quê e quando (LGPD: rastreabilidade)
     dor: { credenciais: {}, monitorias: [], ultimaSincronizacao: 0 },
+    // Amil: extrato de utilização (faturas/reembolsos), carteirinhas e as
+    // credenciais cifradas do portal. Nada aqui é preenchido por login
+    // automático — tudo vem de arquivo que a própria família importa.
+    amil: { credenciais: {}, carteirinhas: [], faturas: [], guias: [], ultimaConferencia: 0 },
     config: { unidades: [], sincronizacaoUrl: '', nomeCanal: 'Canal Teruel' },
     lixeira: {},        // { colecao: { id: timestamp } } — respeita exclusões no merge
   };
@@ -213,6 +217,11 @@ function normalizar(e) {
   out.lixeira = out.lixeira || {};
   out.dor = { ...base.dor, ...(out.dor || {}) };
   out.config = { ...base.config, ...(out.config || {}) };
+  out.amil = { ...base.amil, ...(out.amil || {}) };
+  out.amil.credenciais = out.amil.credenciais || {};
+  for (const col of ['faturas', 'carteirinhas', 'guias']) {
+    if (!Array.isArray(out.amil[col])) out.amil[col] = [];
+  }
   return out;
 }
 
@@ -410,6 +419,13 @@ export function mesclar(outro) {
     estado.dor.monitorias = mesclarLista(estado.dor.monitorias, outro.dor.monitorias, 'id');
     estado.dor.credenciais = { ...estado.dor.credenciais, ...(outro.dor.credenciais || {}) };
     estado.dor.ultimaSincronizacao = Math.max(estado.dor.ultimaSincronizacao || 0, outro.dor.ultimaSincronizacao || 0);
+  }
+  if (outro.amil) {
+    estado.amil.faturas = mesclarLista(estado.amil.faturas, outro.amil.faturas, 'id');
+    estado.amil.carteirinhas = mesclarLista(estado.amil.carteirinhas, outro.amil.carteirinhas, 'id');
+    estado.amil.guias = mesclarLista(estado.amil.guias, outro.amil.guias, 'id');
+    estado.amil.credenciais = { ...estado.amil.credenciais, ...(outro.amil.credenciais || {}) };
+    estado.amil.ultimaConferencia = Math.max(estado.amil.ultimaConferencia || 0, outro.amil.ultimaConferencia || 0);
   }
   estado.auditoria = mesclarLista(estado.auditoria, outro.auditoria || [], 'id').slice(0, 1500);
 

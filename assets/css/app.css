@@ -217,6 +217,7 @@ h3 { font-size: 1rem; font-weight: 700; }
 .kpi.warn .kpi-n { color: var(--warn); }
 .kpi.danger .kpi-n { color: var(--danger); }
 .kpi.brand .kpi-n { color: var(--brand); }
+.kpi.info .kpi-n { color: var(--info); }
 
 /* =============================================================== pills ==== */
 .pill {
